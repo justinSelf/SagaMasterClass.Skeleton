@@ -9,8 +9,8 @@ namespace Sales.Policies
 
     class OrderPolicy : Saga<OrderPolicyState>,
         IAmStartedByMessages<StartOrder>,
-        IHandleMessages<PlaceOrder>,
-        IHandleMessages<CancelOrder>,
+        IAmStartedByMessages<PlaceOrder>,
+        IAmStartedByMessages<CancelOrder>,
         IHandleTimeouts<AbandonOrderTimeout>
     {
         protected override void ConfigureHowToFindSaga(SagaPropertyMapper<OrderPolicyState> mapper)
@@ -30,12 +30,14 @@ namespace Sales.Policies
 
         public void Handle(PlaceOrder message)
         {
+            Data.OrderId = message.OrderId;
             Data.State = OrderState.Placed;
             Bus.Publish<IOrderPlaced>(msg => msg.OrderId = Data.OrderId);
         }
 
         public void Handle(CancelOrder message)
         {
+            Data.OrderId = message.OrderId;
             Data.State = OrderState.Canceled;
             Bus.Publish<IOrderCanceled>(msg => msg.OrderId = Data.OrderId);
         }

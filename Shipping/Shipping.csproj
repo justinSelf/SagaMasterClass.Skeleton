@@ -58,10 +58,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FedEx.cs" />
-    <Compile Include="Handlers\ShipOrderHandler.cs" />
+    <Compile Include="Messages\ShipOrderResponse.cs" />
+    <Compile Include="Policies\ShipOrderPolicy.cs" />
+    <Compile Include="Messages\FedExShipResponse.cs" />
+    <Compile Include="Messages\ShipFedex.cs" />
     <Compile Include="Messages\ShipOrder.cs" />
+    <Compile Include="Messages\ShipUps.cs" />
+    <Compile Include="Messages\UpsShipResponse.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="ShippingPolicy.cs" />
+    <Compile Include="Policies\ShippingPolicy.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -82,6 +87,10 @@
     <ProjectReference Include="..\Sales\Sales.csproj">
       <Project>{4C8E43A6-D0A7-4D56-BF8A-14BB8376776E}</Project>
       <Name>Sales</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Shipping.Contracts\Shipping.Contracts.csproj">
+      <Project>{222D4BAD-60E7-4C7D-B46C-B4A7E9E40CBB}</Project>
+      <Name>Shipping.Contracts</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

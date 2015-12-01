@@ -1,13 +1,17 @@
-﻿namespace Shipping
+﻿namespace Shipping.Policies
 {
+    using System;
     using Billing.Contracts;
+    using Contracts;
     using Messages;
+    using NServiceBus;
     using NServiceBus.Saga;
     using Sales.Contracts;
 
     public class ShippingPolicy : Saga<ShippingPolicyData>,
         IAmStartedByMessages<IOrderPlaced>,
-        IAmStartedByMessages<IOrderBilled>
+        IAmStartedByMessages<IOrderBilled>,
+        IHandleMessages<ShipOrderResponse>
     {
         protected override void ConfigureHowToFindSaga(SagaPropertyMapper<ShippingPolicyData> mapper)
         {
@@ -47,6 +51,12 @@
         private bool CanShip()
         {
             return Data.IsOrderBilled && Data.IsOrderPlaced;
+        }
+
+        public void Handle(ShipOrderResponse message)
+        {
+            Console.WriteLine($"The Order {Data.OrderId} was shipped!");
+            Bus.Publish<IOrderShipped>(msg => msg.OrderId = Data.OrderId);
         }
     }
 
