@@ -23,20 +23,20 @@ namespace Sales.Policies
         {
             Data.OrderId = message.OrderId;
             Data.Status = OrderStatus.Started;
-            this.Bus.Publish<IOrderStarted>(msg => msg.OrderId = Data.OrderId);
-            this.RequestTimeout<AbandonOrderTimeout>(TimeSpan.FromSeconds(20));
+            Bus.Publish<IOrderStarted>(msg => msg.OrderId = Data.OrderId);
+            RequestTimeout<AbandonOrderTimeout>(TimeSpan.FromSeconds(20));
         }
 
         public void Handle(PlaceOrder message)
         {
             Data.Status = OrderStatus.Placed;
-            this.Bus.Publish<IOrderPlaced>(msg => msg.OrderId = Data.OrderId);
+            Bus.Publish<IOrderPlaced>(msg => msg.OrderId = Data.OrderId);
         }
 
         public void Handle(CancelOrder message)
         {
             Data.Status = OrderStatus.Canceled;
-            this.Bus.Publish<IOrderCanceled>(msg => msg.OrderId = Data.OrderId);
+            Bus.Publish<IOrderCanceled>(msg => msg.OrderId = Data.OrderId);
         }
 
         public void Timeout(AbandonOrderTimeout state)
@@ -44,7 +44,7 @@ namespace Sales.Policies
             if (Data.Status == OrderStatus.Started)
             {
                 Data.Status = OrderStatus.Abandoned;
-                this.Bus.Publish<IOrderAbandoned>(msg => msg.OrderId = Data.OrderId);
+                Bus.Publish<IOrderAbandoned>(msg => msg.OrderId = Data.OrderId);
             }
         }
     }
@@ -58,6 +58,7 @@ namespace Sales.Policies
 
     public enum OrderStatus
     {
+        Unstarted,
         Started,
         Placed,
         Canceled,
