@@ -4,7 +4,6 @@ namespace Sales.Policies
 {
     using Contracts;
     using Messages;
-    using NServiceBus;
     using NServiceBus.Saga;
 
     class OrderPolicy : Saga<OrderPolicyState>,
@@ -32,7 +31,13 @@ namespace Sales.Policies
         {
             Data.OrderId = message.OrderId;
             Data.State = OrderState.Placed;
-            Bus.Publish<IOrderPlaced>(msg => msg.OrderId = Data.OrderId);
+            Bus.Publish<IOrderPlaced>(msg =>
+            {
+                msg.OrderId = Data.OrderId;
+                msg.OrderValue = message.OrderValue;
+                msg.CustomerId = message.CustomerId;
+                msg.OrderDate = message.OrderDate;
+            });
         }
 
         public void Handle(CancelOrder message)
