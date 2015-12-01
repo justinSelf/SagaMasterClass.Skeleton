@@ -61,6 +61,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Handlers\BillOrderHandler.cs" />
+    <Compile Include="Handlers\OrderPlacedHandler.cs" />
+    <Compile Include="Messages\BillOrder.cs" />
     <Compile Include="Program.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -75,6 +78,10 @@
     <ProjectReference Include="..\Sales.Contracts\Sales.Contracts.csproj">
       <Project>{fc3d1e8f-b821-4eb7-9349-b2e12c45f81f}</Project>
       <Name>Sales.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sales\Sales.csproj">
+      <Project>{4C8E43A6-D0A7-4D56-BF8A-14BB8376776E}</Project>
+      <Name>Sales</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

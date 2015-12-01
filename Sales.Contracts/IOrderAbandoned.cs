@@ -1,4 +1,4 @@
-﻿namespace Sales.Messages
+﻿namespace Sales.Contracts
 {
     using NServiceBus;
 

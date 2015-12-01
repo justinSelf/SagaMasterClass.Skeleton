@@ -1,8 +1,8 @@
-﻿namespace Sales.Messages
+﻿namespace Sales.Contracts
 {
     using NServiceBus;
 
-    public interface IOrderPlaced : IEvent
+    public interface IOrderCanceled : IEvent
     {
         string OrderId { get; set; }
     }

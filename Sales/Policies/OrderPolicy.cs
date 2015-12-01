@@ -2,6 +2,7 @@
 
 namespace Sales.Policies
 {
+    using Contracts;
     using Messages;
     using NServiceBus;
     using NServiceBus.Saga;
@@ -22,30 +23,30 @@ namespace Sales.Policies
         public void Handle(StartOrder message)
         {
             Data.OrderId = message.OrderId;
-            Data.Status = OrderStatus.Started;
+            Data.State = OrderState.Started;
             Bus.Publish<IOrderStarted>(msg => msg.OrderId = Data.OrderId);
             RequestTimeout<AbandonOrderTimeout>(TimeSpan.FromSeconds(20));
         }
 
         public void Handle(PlaceOrder message)
         {
-            Data.Status = OrderStatus.Placed;
+            Data.State = OrderState.Placed;
             Bus.Publish<IOrderPlaced>(msg => msg.OrderId = Data.OrderId);
         }
 
         public void Handle(CancelOrder message)
         {
-            Data.Status = OrderStatus.Canceled;
+            Data.State = OrderState.Canceled;
             Bus.Publish<IOrderCanceled>(msg => msg.OrderId = Data.OrderId);
         }
 
         public void Timeout(AbandonOrderTimeout state)
         {
-            if (Data.Status != OrderStatus.Started)
+            if (Data.State != OrderState.Started)
             {
                 return;
             }
-            Data.Status = OrderStatus.Abandoned;
+            Data.State = OrderState.Abandoned;
             Bus.Publish<IOrderAbandoned>(msg => msg.OrderId = Data.OrderId);
         }
     }
@@ -54,10 +55,10 @@ namespace Sales.Policies
     {
         [Unique]
         public virtual string OrderId { get; set; }
-        public virtual OrderStatus Status { get; set; }
+        public virtual OrderState State { get; set; }
     }
 
-    public enum OrderStatus
+    public enum OrderState
     {
         Unstarted,
         Started,
