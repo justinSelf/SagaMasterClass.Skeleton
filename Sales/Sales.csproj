@@ -62,7 +62,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Messages\CancelOrder.cs" />
+    <Compile Include="Messages\IOrderAbandoned.cs" />
+    <Compile Include="Messages\IOrderCanceled.cs" />
     <Compile Include="Messages\IOrderCommand.cs" />
+    <Compile Include="Messages\IOrderPlaced.cs" />
+    <Compile Include="Messages\IOrderStarted.cs" />
     <Compile Include="Messages\PlaceOrder.cs" />
     <Compile Include="Messages\StartOrder.cs" />
     <Compile Include="Policies\OrderPolicy.cs" />

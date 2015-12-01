@@ -9,7 +9,8 @@ namespace Sales.Policies
     class OrderPolicy : Saga<OrderPolicyState>, 
         IAmStartedByMessages<StartOrder>,
         IHandleMessages<PlaceOrder>,
-        IHandleMessages<CancelOrder>
+        IHandleMessages<CancelOrder>,
+        IHandleTimeouts<AbandonOrderTimeout>
     {
         protected override void ConfigureHowToFindSaga(SagaPropertyMapper<OrderPolicyState> mapper)
         {
@@ -22,17 +23,29 @@ namespace Sales.Policies
         {
             Data.OrderId = message.OrderId;
             Data.Status = OrderStatus.Started;
-            //SendTimeout
+            this.Bus.Publish<IOrderStarted>(msg => msg.OrderId = Data.OrderId);
+            this.RequestTimeout<AbandonOrderTimeout>(TimeSpan.FromSeconds(20));
         }
 
         public void Handle(PlaceOrder message)
         {
             Data.Status = OrderStatus.Placed;
+            this.Bus.Publish<IOrderPlaced>(msg => msg.OrderId = Data.OrderId);
         }
 
         public void Handle(CancelOrder message)
         {
             Data.Status = OrderStatus.Canceled;
+            this.Bus.Publish<IOrderCanceled>(msg => msg.OrderId = Data.OrderId);
+        }
+
+        public void Timeout(AbandonOrderTimeout state)
+        {
+            if (Data.Status == OrderStatus.Started)
+            {
+                Data.Status = OrderStatus.Abandoned;
+                this.Bus.Publish<IOrderAbandoned>(msg => msg.OrderId = Data.OrderId);
+            }
         }
     }
 
@@ -49,5 +62,10 @@ namespace Sales.Policies
         Placed,
         Canceled,
         Abandoned
+    }
+
+    class AbandonOrderTimeout
+    {
+        
     }
 }
