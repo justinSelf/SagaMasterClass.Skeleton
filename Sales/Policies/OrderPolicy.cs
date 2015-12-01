@@ -6,7 +6,7 @@ namespace Sales.Policies
     using NServiceBus;
     using NServiceBus.Saga;
 
-    class OrderPolicy : Saga<OrderPolicyState>, 
+    class OrderPolicy : Saga<OrderPolicyState>,
         IAmStartedByMessages<StartOrder>,
         IHandleMessages<PlaceOrder>,
         IHandleMessages<CancelOrder>,
@@ -41,11 +41,12 @@ namespace Sales.Policies
 
         public void Timeout(AbandonOrderTimeout state)
         {
-            if (Data.Status == OrderStatus.Started)
+            if (Data.Status != OrderStatus.Started)
             {
-                Data.Status = OrderStatus.Abandoned;
-                Bus.Publish<IOrderAbandoned>(msg => msg.OrderId = Data.OrderId);
+                return;
             }
+            Data.Status = OrderStatus.Abandoned;
+            Bus.Publish<IOrderAbandoned>(msg => msg.OrderId = Data.OrderId);
         }
     }
 
@@ -67,6 +68,6 @@ namespace Sales.Policies
 
     class AbandonOrderTimeout
     {
-        
+
     }
 }
